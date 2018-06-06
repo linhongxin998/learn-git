@@ -1,3 +1,5 @@
+import re
+import urllib
 def delblankline(infile, outfile):
  infopen = open(infile, 'r')
  outfopen = open(outfile, 'w')
