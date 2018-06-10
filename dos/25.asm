@@ -11,7 +11,9 @@ mov ds,ax
 mov si,0
 mov cx,9
 s0:
-mov bx,[si];用bl来表示被乘数，用bh来表示乘数
+mov bx,[si];用cx来表示被乘数，用bx来表示乘数
+;用cmp来判断bx与cx的大小，如果bx不等于cx，就要跳转至s1,增加cx(这个是一行的)
+;如果是一列，就要跳转至s0
 push cx
 mov cx,0
 s1:
