@@ -1,0 +1,93 @@
+#include<iostream>
+#include<fstream>//重定向 
+#include<algorithm>
+using namespace std;
+const int maxn=100+10;
+const int INF=0x0f0f0f0f;
+int shortest[maxn];
+bool visited[maxn];
+bool path[maxn][maxn];
+using adjmartrix=int[maxn][maxn];
+struct Graph{
+    int vexnum;
+    int edgenum;
+    adjmartrix arcs;
+    void init(int vex,int edge){
+    	vexnum=vex;
+    	edgenum=edge;
+        for(int i=1;i<=vexnum;++i)
+            for(int j=1;j<=vexnum;++j)
+                arcs[i][j]=INF;
+    }
+};
+void Dijkstra(Graph myGraph,int origin){
+    int min;
+    for(int i=1;i<=myGraph.vexnum;++i)
+    	for(int j=1;j<=myGraph.vexnum;++j)
+    		path[i][j]=false;
+    for(int i=1;i<=myGraph.vexnum;++i){
+        shortest[i]=myGraph.arcs[origin][i];
+        visited[i]=false;
+        for(int j=1;j<=myGraph.vexnum;++j){
+        	path[i][j]=false;
+		}
+		if(shortest[i]<INF){
+			path[i][origin]=true;
+			path[i][i]=true;
+		}
+    }
+    shortest[origin]=0;
+    visited[origin]=true;
+    for(int i=2;i<=myGraph.vexnum;++i){
+        min=INF;
+        int temp;//记录最小值顶点的中间变量 
+        for(int j=1;j<=myGraph.vexnum;++j)
+            if(!visited[j])
+                if(shortest[j]<min){
+                    temp=j;
+                    min=shortest[j];
+                }
+        visited[temp]=true;
+        for(int j=1;j<=myGraph.vexnum;++j)
+            if(!visited[j]&&(min+myGraph.arcs[temp][j]<shortest[j])){
+                shortest[j]=min+myGraph.arcs[temp][j];
+                path[j][temp]=true;
+                path[j][j]=true;
+                path[j][origin]=true;
+            }
+    }
+}
+int main(){
+	Graph myGraph;
+	ifstream fin("data.txt");
+	streambuf *backup;
+	backup=cin.rdbuf();
+	cin.rdbuf(fin.rdbuf()); 
+	int vexnum,edgenum;
+	int startVex,endVex,weight;
+	cin>>vexnum>>edgenum;
+	myGraph.init(vexnum,edgenum);
+	for(int i=0;i<edgenum;++i){
+		cin>>startVex>>endVex>>weight;
+		myGraph.arcs[startVex][endVex]=weight;
+	}
+	Dijkstra(myGraph,1);
+	cout<<"起始点到各个点的最短路径为:\n";
+	for(int i=2;i<=vexnum;++i){
+		cout<<1<<"->"<<i<<" ";
+		if(shortest[i]!=INF){
+			cout<<shortest[i];
+			cout<<" ";
+			for(int j=1;j<=vexnum;++j){
+				if(path[i][j]){
+					cout<<j<<" ";
+				}
+			}
+			if(i!=vexnum)
+				cout<<'\n';
+		}
+		else
+			cout<<"无路\n";
+	} 
+	return 0;
+}
